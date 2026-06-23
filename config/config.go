@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -16,7 +17,7 @@ type Config struct {
 func LoadConfig() Config {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Println("未找到 .evn 文件")
+		log.Println("未找到 .env 文件")
 	}
 	return Config{
 		DBDriver:  getEnv("DB_DRIVER", "mysql"),

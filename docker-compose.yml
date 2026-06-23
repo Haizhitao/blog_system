@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Go 博客系统
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: blog_system:latest  # 自定义镜像名
+    container_name: blog_system
+    restart: unless-stopped
+    ports:
+      - "8081:8080"  # 主机端口:容器端口
+    environment:
+      - TZ=Asia/Shanghai
+      - GIN_MODE=release  # 如果是 Gin 框架
+      # 数据库配置（根据你的项目调整）
+      # - DB_HOST=host.docker.internal  # 如果 MySQL 在 Windows 上
+      # - DB_HOST=php_mysql  # 如果 MySQL 在 Docker 中
+      # - DB_PORT=3306
+      # - DB_USER=root
+      # - DB_PASSWORD=123456
+      # - DB_NAME=blog
+      # - REDIS_HOST=host.docker.internal
+      # - REDIS_PORT=6379
+    volumes:
+      # 挂载日志目录
+      - ./logs:/app/logs
+      # 挂载 .env 文件到容器
+      - ./.env:/app/.env
+      # 挂载配置文件（如果有）
+      # - ./config:/app/config
+    networks:
+      - blog_network
+      # 如果你想连接到 PHP 项目的网络，取消注释下面这行
+      # - php_network_default  # 需要改成你 PHP 项目的网络名
+      - deployment_crmchat_network
+
+networks:
+  blog_network:
+    driver: bridge
+  deployment_crmchat_network:
+    external: true  # 声明是外部网络
+    name: deployment_crmchat_network  # PHP 项目的实际网络名
